@@ -1,0 +1,153 @@
+<article class="post-card fade-in-up" (click)="closeMenu()">
+
+  <!-- Retweet indicator -->
+  @if (post.retweetedBy) {
+    <div class="retweet-indicator">
+      <span class="rt-icon">🔁</span>
+      <span class="rt-text">
+        <a [routerLink]="['/profile', post.retweetedBy]" (click)="$event.stopPropagation()">
+          {{ post.retweetedBy === currentUser?.username ? 'Vous avez' : post.retweetedBy + ' a' }} partagé
+        </a>
+      </span>
+    </div>
+  }
+
+  <div class="card-body">
+    <!-- Author avatar -->
+    <a [routerLink]="['/profile', post.author.username]" class="avatar-link" (click)="$event.stopPropagation()">
+      <div class="avatar avatar-md"
+           [style.background]="post.author.avatarColor + '22'"
+           [style.border]="'2px solid ' + post.author.avatarColor + '44'">
+        @if (post.author.avatarUrl) {
+          <img [src]="post.author.avatarUrl" [alt]="post.author.displayName" class="avatar-img">
+        } @else {
+          {{ post.author.avatarInitials }}
+        }
+      </div>
+    </a>
+
+    <!-- Content column -->
+    <div class="card-content">
+      <!-- Header -->
+      <div class="card-header">
+        <div class="author-info">
+          <a [routerLink]="['/profile', post.author.username]"
+             class="author-name"
+             (click)="$event.stopPropagation()">
+            {{ post.author.displayName }}
+            @if (post.author.isVerified) { <span class="verified">✓</span> }
+          </a>
+          <span class="author-meta">
+            {{'@'}}{{ post.author.username }} · {{ post.createdAt | timeAgo }}
+          </span>
+        </div>
+
+        <!-- Menu -->
+        @if (isOwner) {
+          <div class="post-menu" (click)="$event.stopPropagation()">
+            <button class="menu-btn" (click)="showMenu = !showMenu">···</button>
+            @if (showMenu) {
+              <div class="menu-dropdown">
+                <button class="menu-item" (click)="startEdit()">✏️ Modifier</button>
+                <button class="menu-item danger" (click)="delete()">🗑️ Supprimer</button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Body: normal or edit mode -->
+      @if (isEditing) {
+        <div class="edit-form" (click)="$event.stopPropagation()">
+          <textarea class="input-field edit-textarea"
+                    [(ngModel)]="editContent"
+                    rows="4">
+          </textarea>
+          <div class="edit-actions">
+            <button class="btn btn-ghost btn-sm" (click)="cancelEdit()">Annuler</button>
+            <button class="btn btn-primary btn-sm" (click)="saveEdit()">Enregistrer</button>
+          </div>
+        </div>
+      } @else {
+        <p class="post-content" [innerHTML]="formatContent(post.content)"></p>
+
+        <!-- Post Images -->
+        @if (post.imageUrls && post.imageUrls.length > 0 && !isEditing) {
+          <div class="post-images"
+               [class.images-1]="post.imageUrls.length === 1"
+               [class.images-2]="post.imageUrls.length === 2"
+               [class.images-3]="post.imageUrls.length === 3"
+               [class.images-4]="post.imageUrls.length === 4">
+            @for (url of post.imageUrls; track $index) {
+              <div class="post-image-item" (click)="openImage(url, $event)">
+                <img [src]="url" [alt]="'Photo ' + ($index + 1)" class="post-img" loading="lazy">
+              </div>
+            }
+          </div>
+        }
+      }
+
+      <!-- Hashtags chips -->
+      @if (post.hashtags.length > 0 && !isEditing) {
+        <div class="hashtags">
+          @for (tag of post.hashtags.slice(0,4); track tag) {
+            <span class="chip">#{{ tag }}</span>
+          }
+        </div>
+      }
+
+      <!-- Action bar -->
+      <div class="actions">
+        <!-- Comment -->
+        <button class="action-btn"
+                [class.active]="showComments"
+                (click)="toggleComments(); $event.stopPropagation()">
+          <span class="action-icon">💬</span>
+          <span class="action-count">{{ post.commentsCount | formatCount }}</span>
+        </button>
+
+        <!-- Partager (Retweet) -->
+        <button class="action-btn retweet-btn"
+                [class.active]="post.isRetweeted"
+                (click)="toggleRetweet(); $event.stopPropagation()">
+          <span class="action-icon">🔁</span>
+          <span class="action-count">{{ post.retweetsCount | formatCount }}</span>
+        </button>
+
+        <!-- Favori (Like) -->
+        <button class="action-btn like-btn"
+                [class.active]="post.isLiked"
+                (click)="toggleLike(); $event.stopPropagation()">
+          <span class="action-icon">{{ post.isLiked ? '❤️' : '🤍' }}</span>
+          <span class="action-count">{{ post.likesCount | formatCount }}</span>
+        </button>
+
+        <!-- Enregistrer (Bookmark) -->
+        <button class="action-btn bookmark-btn"
+                [class.active]="post.isBookmarked"
+                (click)="toggleBookmark(); $event.stopPropagation()"
+                style="margin-left: auto;">
+          <span class="action-icon">{{ post.isBookmarked ? '🔖' : '📄' }}</span>
+        </button>
+      </div>
+
+      <!-- Comments section -->
+      @if (showComments) {
+        <div class="comments-section" (click)="$event.stopPropagation()">
+          <app-comment-list
+            [postId]="post.id"
+            (commentAdded)="onCommentAdded()">
+          </app-comment-list>
+        </div>
+      }
+    </div>
+  </div>
+</article>
+
+<!-- Lightbox -->
+@if (lightboxUrl) {
+  <div class="lightbox-overlay" (click)="closeLightbox()">
+    <img [src]="lightboxUrl" class="lightbox-img" (click)="$event.stopPropagation()">
+    <button class="lightbox-close" (click)="closeLightbox()">✕</button>
+  </div>
+}

@@ -1,0 +1,80 @@
+.posts-list { display: flex; flex-direction: column; }
+
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
+.skeleton-list { padding: 8px 0; }
+
+.skeleton-post {
+  display: flex;
+  gap: 14px;
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.avatar-sk {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sk-lines { flex: 1; display: flex; flex-direction: column; gap: 10px; padding-top: 4px; }
+
+.sk-line { height: 14px; border-radius: 4px; }
+
+// ─── Suggestions mobile ───────────────────────────────────────────────────────
+.suggestions-mobile {
+  display: none;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+
+  @media (max-width: 768px) { display: block; }
+}
+
+.suggestions-title {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.suggestions-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.suggestion-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+// ─── Load more ────────────────────────────────────────────────────────────────
+.load-more {
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+}
+
+.load-more-btn {
+  min-width: 160px;
+}
+
+.end-message {
+  text-align: center;
+  padding: 32px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}

@@ -1,0 +1,107 @@
+@if (!compact) {
+  <div class="section-header">
+    <h2>🔥 Tendances artisanales</h2>
+  </div>
+}
+
+<div class="trending-wrapper" [class.compact]="compact">
+
+  <!-- Search bar (compact only) -->
+  @if (compact) {
+    <div class="search-widget">
+      <input
+        class="search-input"
+        type="text"
+        placeholder="🔍  Rechercher…"
+        readonly
+        (click)="searchHashtag('')"
+        style="cursor:pointer">
+    </div>
+  }
+
+  <!-- Trending hashtags block -->
+  <div class="trend-block">
+    <h3 class="block-title">{{ compact ? 'Tendances' : 'Hashtags populaires' }}</h3>
+
+    @if (isLoading) {
+      @for (i of [1,2,3,4,5]; track i) {
+        <div class="trend-skeleton">
+          <div class="skeleton sk-sm"></div>
+          <div class="skeleton sk-lg"></div>
+        </div>
+      }
+    } @else {
+      @for (tag of hashtags; track tag.id; let idx = $index) {
+        <div class="trend-item" (click)="searchHashtag(tag.tag)">
+          <div class="trend-left">
+            <span class="trend-rank">{{ idx + 1 }}</span>
+            <div class="trend-info">
+              <span class="trend-category">{{ tag.category }}</span>
+              <span class="trend-tag">#{{ tag.tag }}</span>
+              <span class="trend-count">{{ tag.postsCount | formatCount }} créations</span>
+            </div>
+          </div>
+          <span class="trend-arrow" [class]="trendClass(tag.trend)">
+            {{ trendIcon(tag.trend) }}
+          </span>
+        </div>
+      }
+    }
+
+    @if (!compact) {
+      <div class="show-more" (click)="searchHashtag('')">Voir tout →</div>
+    }
+  </div>
+
+  <!-- Suggestions block -->
+  @if (!compact || suggestions.length > 0) {
+    <div class="suggestions-block">
+      <h3 class="block-title">Artisans à découvrir</h3>
+
+      @for (user of suggestions; track user.id) {
+        <div class="suggestion-item">
+          <div class="suggestion-avatar-wrap" (click)="goToProfile(user.username)">
+            <div class="avatar avatar-sm"
+                 [style.background]="user.avatarColor + '22'"
+                 [style.border]="'2px solid ' + user.avatarColor + '55'">
+              @if (user.avatarUrl) {
+                <img [src]="user.avatarUrl" [alt]="user.displayName" class="avatar-img">
+              } @else {
+                {{ user.avatarInitials }}
+              }
+            </div>
+          </div>
+
+          <div class="suggestion-info" (click)="goToProfile(user.username)">
+            <span class="suggestion-name">
+              {{ user.displayName }}
+              @if (user.isVerified) { <span class="verified-mini">✓</span> }
+            </span>
+            <span class="suggestion-handle">{{'@'}}{{ user.username }}</span>
+          </div>
+
+          <button
+            class="btn btn-sm"
+            [class.btn-primary]="!user.isFollowing"
+            [class.btn-ghost]="user.isFollowing"
+            (click)="followUser(user.id)">
+            {{ user.isFollowing ? 'Suivi' : 'Suivre' }}
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Footer links (compact) -->
+  @if (compact) {
+    <div class="footer-links">
+      <span>À propos</span>
+      <span>·</span>
+      <span>Confidentialité</span>
+      <span>·</span>
+      <span>Conditions</span>
+      <br>
+      <span class="footer-copy">© 2024 Artisanat Marocain</span>
+    </div>
+  }
+</div>

@@ -1,0 +1,193 @@
+.section-header {
+  padding: 20px 20px 0;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 16px;
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+
+  .section-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+}
+
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
+.skeleton-list { padding: 16px; }
+.skeleton-user {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.avatar-sk { width: 48px; height: 48px; border-radius: 50%; }
+.sk-lines { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.sk-line { height: 12px; border-radius: 6px; }
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-hover) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// ─── Section ──────────────────────────────────────────────────────────────────
+.members-section {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.members-section-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge-new {
+  background: linear-gradient(135deg, #ff6b9d22, #ff3d7f11);
+  border: 1px solid rgba(255, 107, 157, 0.3);
+  color: #ff6b9d;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+}
+
+// ─── Grid ─────────────────────────────────────────────────────────────────────
+.members-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+// ─── Card ─────────────────────────────────────────────────────────────────────
+.member-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 12px;
+  border-radius: var(--radius-md);
+  transition: background var(--transition);
+
+  &:hover { background: var(--bg-hover); }
+
+  &.registered {
+    background: rgba(255, 107, 157, 0.04);
+    border: 1px solid rgba(255, 107, 157, 0.12);
+    margin-bottom: 6px;
+
+    &:hover { background: rgba(255, 107, 157, 0.08); }
+  }
+}
+
+.member-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1;
+  text-decoration: none;
+  color: inherit;
+  min-width: 0;
+}
+
+.member-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.member-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  .verified {
+    color: var(--accent);
+    font-size: 0.75rem;
+    background: var(--accent-glow);
+    border-radius: 50%;
+    width: 16px; height: 16px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+}
+
+.member-username {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.member-bio {
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-width: 600px) { display: none; }
+}
+
+.member-stats {
+  display: flex;
+  gap: 6px;
+  margin-top: 5px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+
+  strong { color: var(--text-primary); }
+}
+
+// ─── Follow button ────────────────────────────────────────────────────────────
+.follow-btn {
+  flex-shrink: 0;
+  min-width: 90px;
+  text-align: center;
+
+  &.btn-primary {
+    background: linear-gradient(135deg, #ff6b9d, #e91e8c) !important;
+    border: none !important;
+    color: white !important;
+    box-shadow: 0 2px 12px rgba(255, 107, 157, 0.35);
+
+    &:hover:not(:disabled) {
+      box-shadow: 0 4px 20px rgba(255, 107, 157, 0.5);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+.no-registered {
+  text-align: center;
+  padding: 24px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+
+  span { font-size: 1.5rem; display: block; margin-bottom: 8px; }
+}
+
+// ─── Avatar sizes ─────────────────────────────────────────────────────────────
+.avatar-lg {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 1rem;
+  flex-shrink: 0;
+}

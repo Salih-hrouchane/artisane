@@ -1,0 +1,163 @@
+<div class="auth-page">
+
+  <!-- Background animated blobs -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="auth-container">
+
+    <!-- Logo -->
+    <div class="auth-logo">
+      <span class="logo-bird">🏺</span>
+      <span class="logo-text">Artisanat Marocain</span>
+    </div>
+
+    <!-- Tab switcher -->
+    <div class="auth-tabs">
+      <button class="tab-btn" [class.active]="mode === 'login'" (click)="switchTo('login')">
+        Connexion
+      </button>
+      <button class="tab-btn" [class.active]="mode === 'signup'" (click)="switchTo('signup')">
+        Inscription
+      </button>
+      <div class="tab-indicator" [class.right]="mode === 'signup'"></div>
+    </div>
+
+    <!-- ── LOGIN FORM ── -->
+    @if (mode === 'login') {
+      <div class="auth-form fade-in">
+        <h2 class="form-title">Bon retour artisan 👋</h2>
+        <p class="form-subtitle">Connecte-toi pour partager tes créations</p>
+
+        <div class="field-group">
+          <label class="field-label">Email</label>
+          <div class="field-wrapper">
+            <span class="field-icon">✉️</span>
+            <input
+              class="field-input"
+              type="email"
+              placeholder="ton@email.com"
+              [(ngModel)]="loginEmail"
+              (keyup.enter)="onLogin()"
+            />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Mot de passe</label>
+          <div class="field-wrapper">
+            <span class="field-icon">🔒</span>
+            <input
+              class="field-input"
+              type="password"
+              placeholder="••••••••"
+              [(ngModel)]="loginPassword"
+              (keyup.enter)="onLogin()"
+            />
+          </div>
+        </div>
+
+        @if (loginError) {
+          <div class="error-msg">
+            <span>⚠️</span> {{ loginError }}
+          </div>
+        }
+
+        <button class="btn-primary" (click)="onLogin()" [class.loading]="loginLoading" [disabled]="loginLoading">
+          @if (loginLoading) {
+            <span class="spinner"></span> Connexion...
+          } @else {
+            Se connecter
+          }
+        </button>
+
+        <p class="switch-hint">
+          Pas encore de compte ?
+          <button class="link-btn" (click)="switchTo('signup')">Rejoindre la communauté</button>
+        </p>
+      </div>
+    }
+
+    <!-- ── SIGNUP FORM ── -->
+    @if (mode === 'signup') {
+      <div class="auth-form fade-in">
+        <h2 class="form-title">Rejoins la communauté 🌟</h2>
+        <p class="form-subtitle">Crée ton atelier en quelques secondes</p>
+
+        <div class="field-group">
+          <label class="field-label">Nom complet</label>
+          <div class="field-wrapper">
+            <span class="field-icon">👤</span>
+            <input
+              class="field-input"
+              type="text"
+              placeholder="Ton Nom"
+              [(ngModel)]="signupName"
+            />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Nom d'utilisateur</label>
+          <div class="field-wrapper">
+            <span class="field-icon">&#64;</span>
+            <input
+              class="field-input"
+              type="text"
+              placeholder="mon_atelier"
+              [(ngModel)]="signupUsername"
+            />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Email</label>
+          <div class="field-wrapper">
+            <span class="field-icon">✉️</span>
+            <input
+              class="field-input"
+              type="email"
+              placeholder="ton@email.com"
+              [(ngModel)]="signupEmail"
+            />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Mot de passe</label>
+          <div class="field-wrapper">
+            <span class="field-icon">🔒</span>
+            <input
+              class="field-input"
+              type="password"
+              placeholder="Min. 6 caractères"
+              [(ngModel)]="signupPassword"
+              (keyup.enter)="onSignup()"
+            />
+          </div>
+        </div>
+
+        @if (signupError) {
+          <div class="error-msg">
+            <span>⚠️</span> {{ signupError }}
+          </div>
+        }
+
+        <button class="btn-primary" (click)="onSignup()" [class.loading]="signupLoading" [disabled]="signupLoading">
+          @if (signupLoading) {
+            <span class="spinner"></span> Création...
+          } @else {
+            Ouvrir mon atelier
+          }
+        </button>
+
+        <p class="switch-hint">
+          Déjà membre ?
+          <button class="link-btn" (click)="switchTo('login')">Se connecter</button>
+        </p>
+      </div>
+    }
+
+  </div>
+</div>

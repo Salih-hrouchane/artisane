@@ -1,0 +1,81 @@
+<div class="section-header">
+  <div class="header-row">
+    <h2>🔔 Notifications</h2>
+    @if (unreadCount > 0) {
+      <button class="btn btn-ghost btn-sm mark-all-btn" (click)="markAllRead()">
+        Tout marquer lu ({{ unreadCount }})
+      </button>
+    }
+  </div>
+</div>
+
+@if (isLoading) {
+  <div class="notif-skeleton-list">
+    @for (i of [1,2,3,4,5]; track i) {
+      <div class="notif-skeleton">
+        <div class="skeleton notif-icon-sk"></div>
+        <div class="skeleton notif-avatar-sk"></div>
+        <div class="sk-lines">
+          <div class="skeleton sk-line" style="width:75%"></div>
+          <div class="skeleton sk-line" style="width:45%"></div>
+        </div>
+      </div>
+    }
+  </div>
+
+} @else if (notifications.length === 0) {
+  <div class="empty-state">
+    <span class="empty-icon">🔕</span>
+    <h3>Aucune notification</h3>
+    <p>Vous verrez ici les interactions sur vos créations.</p>
+  </div>
+
+} @else {
+  <div class="notif-list">
+    @for (notif of notifications; track trackByNotif($index, notif)) {
+      <div
+        class="notif-item fade-in-up"
+        [class.unread]="!notif.isRead"
+        (click)="markRead(notif.id)">
+
+        @if (!notif.isRead) {
+          <div class="unread-dot"></div>
+        }
+
+        <div class="notif-type-icon" [style.background]="notifColor(notif.type) + '22'">
+          <span>{{ notifIcon(notif.type) }}</span>
+        </div>
+
+        <a [routerLink]="['/profile', notif.actor.username]"
+           (click)="$event.stopPropagation()">
+          <div class="avatar avatar-md notif-avatar"
+               [style.background]="notif.actor.avatarColor + '22'"
+               [style.border]="'2px solid ' + notif.actor.avatarColor + '55'">
+            @if (notif.actor.avatarUrl) {
+              <img [src]="notif.actor.avatarUrl" [alt]="notif.actor.displayName" class="avatar-img">
+            } @else {
+              {{ notif.actor.avatarInitials }}
+            }
+          </div>
+        </a>
+
+        <div class="notif-body">
+          <p class="notif-text">
+            <a [routerLink]="['/profile', notif.actor.username]"
+               class="notif-actor"
+               (click)="$event.stopPropagation()">
+              {{ notif.actor.displayName }}
+            </a>
+            {{ notifMessage(notif) }}
+          </p>
+
+          @if (notif.postContent) {
+            <p class="notif-preview">« {{ notif.postContent }} »</p>
+          }
+
+          <span class="notif-time">{{ notif.createdAt | timeAgo }}</span>
+        </div>
+      </div>
+    }
+  </div>
+}

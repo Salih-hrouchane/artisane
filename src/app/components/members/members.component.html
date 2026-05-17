@@ -1,0 +1,116 @@
+<div class="section-header">
+  <h2>🧑‍🎨 Artisans</h2>
+  <p class="section-subtitle">Découvrez et suivez les artisans de la communauté</p>
+</div>
+
+@if (isLoading) {
+  <div class="skeleton-list">
+    @for (i of [1,2,3,4,5]; track i) {
+      <div class="skeleton-user">
+        <div class="skeleton avatar-sk"></div>
+        <div class="sk-lines">
+          <div class="skeleton sk-line" style="width:45%"></div>
+          <div class="skeleton sk-line" style="width:30%"></div>
+        </div>
+      </div>
+    }
+  </div>
+} @else {
+
+  <!-- Utilisateurs inscrits -->
+  @if (registeredUsers.length > 0) {
+    <div class="members-section">
+      <div class="members-section-title">
+        <span class="badge-new">🆕 Nouveaux artisans</span>
+      </div>
+      <div class="members-grid">
+        @for (user of registeredUsers; track user.id) {
+          <div class="member-card registered">
+            <a class="member-info" [routerLink]="['/profile', user.username]">
+              <div class="avatar avatar-lg"
+                   [style.background]="user.avatarColor + '22'"
+                   [style.border]="'2px solid ' + user.avatarColor + '66'">
+                @if (user.avatarUrl) {
+                  <img [src]="user.avatarUrl" [alt]="user.displayName" class="avatar-img">
+                } @else {
+                  {{ user.avatarInitials }}
+                }
+              </div>
+              <div class="member-details">
+                <div class="member-name">
+                  {{ user.displayName }}
+                  @if (user.isVerified) { <span class="verified">✓</span> }
+                </div>
+                <div class="member-username">{{'@'}}{{ user.username }}</div>
+                <div class="member-bio">{{ user.bio }}</div>
+                <div class="member-stats">
+                  <span><strong>{{ user.followersCount | formatCount }}</strong> abonnés</span>
+                  <span>·</span>
+                  <span><strong>{{ user.followingCount | formatCount }}</strong> abonnements</span>
+                </div>
+              </div>
+            </a>
+            <button
+              class="btn btn-sm follow-btn"
+              [class.btn-primary]="!user.isFollowing"
+              [class.btn-ghost]="user.isFollowing"
+              [disabled]="followingInProgress.has(user.id)"
+              (click)="toggleFollow(user.id)">
+              {{ user.isFollowing ? '✓ Suivi' : '+ Suivre' }}
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="no-registered">
+      <span>🌱</span>
+      <p>Aucun autre artisan inscrit pour le moment.</p>
+    </div>
+  }
+
+  <!-- Artisans de la communauté -->
+  <div class="members-section">
+    <div class="members-section-title">
+      <span>🌐 Communauté artisanale</span>
+    </div>
+    <div class="members-grid">
+      @for (user of staticUsers; track user.id) {
+        <div class="member-card">
+          <a class="member-info" [routerLink]="['/profile', user.username]">
+            <div class="avatar avatar-lg"
+                 [style.background]="user.avatarColor + '22'"
+                 [style.border]="'2px solid ' + user.avatarColor + '44'">
+              @if (user.avatarUrl) {
+                <img [src]="user.avatarUrl" [alt]="user.displayName" class="avatar-img">
+              } @else {
+                {{ user.avatarInitials }}
+              }
+            </div>
+            <div class="member-details">
+              <div class="member-name">
+                {{ user.displayName }}
+                @if (user.isVerified) { <span class="verified">✓</span> }
+              </div>
+              <div class="member-username">{{'@'}}{{ user.username }}</div>
+              <div class="member-bio">{{ user.bio }}</div>
+              <div class="member-stats">
+                <span><strong>{{ user.followersCount | formatCount }}</strong> abonnés</span>
+                <span>·</span>
+                <span><strong>{{ user.followingCount | formatCount }}</strong> abonnements</span>
+              </div>
+            </div>
+          </a>
+          <button
+            class="btn btn-sm follow-btn"
+            [class.btn-primary]="!user.isFollowing"
+            [class.btn-ghost]="user.isFollowing"
+            [disabled]="followingInProgress.has(user.id)"
+            (click)="toggleFollow(user.id)">
+            {{ user.isFollowing ? '✓ Suivi' : '+ Suivre' }}
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+}

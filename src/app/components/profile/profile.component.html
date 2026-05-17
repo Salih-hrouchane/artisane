@@ -1,0 +1,153 @@
+@if (isLoading) {
+  <div class="profile-skeleton">
+    <div class="skeleton cover-sk"></div>
+    <div class="skeleton avatar-sk"></div>
+    <div class="sk-info">
+      <div class="skeleton sk-line" style="width:50%"></div>
+      <div class="skeleton sk-line" style="width:35%"></div>
+      <div class="skeleton sk-line" style="width:80%"></div>
+    </div>
+  </div>
+} @else if (!user) {
+  <div class="empty-state" style="padding-top: 80px;">
+    <span class="empty-icon">👤</span>
+    <h3>Artisan introuvable</h3>
+    <p>Ce profil n'existe pas ou a été supprimé.</p>
+  </div>
+} @else {
+  <!-- Cover -->
+  <div class="profile-cover" [style.background]="'linear-gradient(135deg, ' + user.avatarColor + '44, ' + user.coverColor + '33)'">
+    <div class="cover-pattern"></div>
+  </div>
+
+  <!-- Profile info -->
+  <div class="profile-info-section">
+    <div class="profile-top">
+      <div class="avatar avatar-xl profile-avatar"
+           [style.background]="user.avatarColor + '22'"
+           [style.border]="'3px solid ' + user.avatarColor">
+        @if (user.avatarUrl) {
+          <img [src]="user.avatarUrl" [alt]="user.displayName" class="avatar-img">
+        } @else {
+          {{ user.avatarInitials }}
+        }
+      </div>
+
+      <div class="profile-actions">
+        <button
+          class="btn"
+          [class.btn-ghost]="user.isFollowing"
+          [class.btn-primary]="!user.isFollowing"
+          [disabled]="isFollowLoading"
+          (click)="toggleFollow()">
+          {{ user.isFollowing ? 'Suivi ✓' : '+ Suivre' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="profile-names">
+      <h1 class="display-name">
+        {{ user.displayName }}
+        @if (user.isVerified) {
+          <span class="verified">✓</span>
+        }
+      </h1>
+      <p class="profile-username">{{'@'}}{{ user.username }}</p>
+    </div>
+
+    <p class="profile-bio">{{ user.bio }}</p>
+
+    <div class="profile-meta">
+      <span>📅 Membre depuis {{ joinedLabel }}</span>
+    </div>
+
+    <div class="profile-stats">
+      <div class="stat">
+        <span class="stat-value">{{ user.followingCount | formatCount }}</span>
+        <span class="stat-label">Abonnements</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">{{ user.followersCount | formatCount }}</span>
+        <span class="stat-label">Abonnés</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">{{ user.postsCount | formatCount }}</span>
+        <span class="stat-label">Créations</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn" [class.active]="activeTab === 'posts'" (click)="loadTab('posts')">
+      Créations
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'likes'" (click)="loadTab('likes')">
+      Favoris
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'followers'" (click)="loadTab('followers')">
+      Abonnés
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'following'" (click)="loadTab('following')">
+      Suivis
+    </button>
+  </div>
+
+  <!-- Content -->
+  @if (activeTab === 'posts' || activeTab === 'likes') {
+    @if (posts.length === 0) {
+      <div class="empty-state">
+        <span class="empty-icon">{{ activeTab === 'posts' ? '🏺' : '🤍' }}</span>
+        <h3>{{ activeTab === 'posts' ? 'Aucune création' : 'Aucun favori' }}</h3>
+        <p>{{ activeTab === 'posts' ? 'Cet artisan n\'a pas encore publié.' : 'Aucune création mise en favori.' }}</p>
+      </div>
+    } @else {
+      @for (post of posts; track post.id) {
+        <app-post-card [post]="post" (deleted)="onPostDeleted($event)"></app-post-card>
+      }
+    }
+  } @else {
+    <!-- Followers / Following List -->
+    @if (usersList.length === 0) {
+      <div class="empty-state">
+        <span class="empty-icon">👥</span>
+        <h3>Aucun artisan</h3>
+        <p>Cette liste est vide pour le moment.</p>
+      </div>
+    } @else {
+      <div class="users-grid">
+        @for (u of usersList; track u.id) {
+          <div class="user-item">
+            <a [routerLink]="['/profile', u.username]" class="user-link">
+              <div class="avatar avatar-lg"
+                   [style.background]="u.avatarColor + '22'"
+                   [style.border]="'2px solid ' + u.avatarColor + '55'">
+                @if (u.avatarUrl) {
+                  <img [src]="u.avatarUrl" [alt]="u.displayName" class="avatar-img">
+                } @else {
+                  {{ u.avatarInitials }}
+                }
+              </div>
+              <div class="user-details">
+                <span class="user-name">
+                  {{ u.displayName }}
+                  @if (u.isVerified) { <span class="verified">✓</span> }
+                </span>
+                <span class="user-handle">{{'@'}}{{ u.username }}</span>
+                <p class="user-bio-mini">{{ u.bio }}</p>
+              </div>
+            </a>
+            <button
+              class="btn btn-sm"
+              [class.btn-primary]="!u.isFollowing"
+              [class.btn-ghost]="u.isFollowing"
+              [disabled]="followingInProgress.has(u.id)"
+              (click)="toggleFollowListUser(u.id)">
+              {{ u.isFollowing ? 'Suivi' : 'Suivre' }}
+            </button>
+          </div>
+        }
+      </div>
+    }
+  }
+}

@@ -1,0 +1,112 @@
+<div class="section-header">
+  <h2>🔍 Recherche</h2>
+</div>
+
+<!-- Search bar -->
+<div class="search-bar-wrapper">
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input
+      class="search-input"
+      type="text"
+      [(ngModel)]="query"
+      (ngModelChange)="onQueryChange()"
+      placeholder="Rechercher des créations, #tissage, @artisans…"
+      autofocus>
+    @if (query) {
+      <button class="clear-btn" (click)="clearQuery()">✕</button>
+    }
+  </div>
+</div>
+
+<!-- Tabs (only if searched) -->
+@if (hasSearched) {
+  <div class="tabs">
+    <button class="tab-btn" [class.active]="activeTab === 'posts'" (click)="setTab('posts')">
+      Créations
+      @if (posts.length > 0) {
+        <span class="tab-count">{{ posts.length }}</span>
+      }
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'users'" (click)="setTab('users')">
+      Artisans
+      @if (users.length > 0) {
+        <span class="tab-count">{{ users.length }}</span>
+      }
+    </button>
+  </div>
+}
+
+@if (isLoading) {
+  <div class="search-loading">
+    <div class="loading-spinner">⟳</div>
+    <p>Recherche en cours…</p>
+  </div>
+
+} @else if (!hasSearched) {
+  <div class="search-placeholder">
+    <div class="placeholder-graphic">🏺</div>
+    <h3>Explorez l'artisanat marocain</h3>
+    <p>Recherchez des créations, des hashtags ou des artisans.</p>
+    <div class="quick-tags">
+      @for (tag of ['tissage', 'poterie', 'zellige', 'bijoux', 'broderie']; track tag) {
+        <span class="chip" (click)="query = '#' + tag; onQueryChange()">#{{ tag }}</span>
+      }
+    </div>
+  </div>
+
+} @else if (resultCount === 0) {
+  <div class="empty-state">
+    <span class="empty-icon">🕵️</span>
+    <h3>Aucun résultat pour "{{ query }}"</h3>
+    <p>Essayez un autre mot-clé ou hashtag artisanal.</p>
+  </div>
+
+} @else {
+
+  @if (activeTab === 'posts') {
+    <div class="results-list">
+      @for (post of posts; track post.id) {
+        <app-post-card [post]="post" (deleted)="onPostDeleted($event)"></app-post-card>
+      }
+    </div>
+  }
+
+  @if (activeTab === 'users') {
+    <div class="users-list">
+      @for (user of users; track user.id) {
+        <div class="user-result-card">
+          <div class="avatar avatar-md"
+               [style.background]="user.avatarColor + '22'"
+               [style.border]="'2px solid ' + user.avatarColor + '55'">
+            {{ user.avatarInitials }}
+          </div>
+
+          <div class="user-result-info">
+            <div class="user-result-name">
+              {{ user.displayName }}
+              @if (user.isVerified) {
+                <span class="verified-sm">✓</span>
+              }
+            </div>
+            <div class="user-result-handle">{{'@'}}{{ user.username }}</div>
+            <div class="user-result-bio">{{ user.bio }}</div>
+            <div class="user-result-stats">
+              <span><strong>{{ user.followersCount | formatCount }}</strong> abonnés</span>
+              <span>·</span>
+              <span><strong>{{ user.postsCount | formatCount }}</strong> créations</span>
+            </div>
+          </div>
+
+          <button
+            class="btn btn-sm"
+            [class.btn-primary]="!user.isFollowing"
+            [class.btn-ghost]="user.isFollowing"
+            (click)="followUser(user.id)">
+            {{ user.isFollowing ? 'Suivi ✓' : '+ Suivre' }}
+          </button>
+        </div>
+      }
+    </div>
+  }
+}

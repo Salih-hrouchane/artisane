@@ -1,0 +1,60 @@
+<!-- Add comment input -->
+<div class="comment-input-row">
+  <div class="avatar avatar-sm"
+       [style.background]="currentUserColor + '22'"
+       [style.border]="'1px solid ' + currentUserColor + '55'">
+    {{ currentUserInitials }}
+  </div>
+  <div class="input-wrapper">
+    <textarea
+      class="comment-input"
+      [(ngModel)]="newComment"
+      (keydown)="onKeyDown($event)"
+      placeholder="Répondre…"
+      rows="1">
+    </textarea>
+    <button
+      class="btn btn-primary btn-sm send-btn"
+      [disabled]="!newComment.trim() || isSubmitting"
+      (click)="addComment()">
+      {{ isSubmitting ? '…' : 'Répondre' }}
+    </button>
+  </div>
+</div>
+
+<!-- Comment list -->
+@if (comments.length === 0) {
+  <p class="no-comments">Soyez le premier à répondre 💬</p>
+}
+
+@for (comment of comments; track comment.id) {
+  <div class="comment-item fade-in-up">
+    <a [routerLink]="['/profile', comment.author.username]">
+      <div class="avatar avatar-sm"
+           [style.background]="comment.author.avatarColor + '22'"
+           [style.border]="'1px solid ' + comment.author.avatarColor + '44'">
+        {{ comment.author.avatarInitials }}
+      </div>
+    </a>
+
+    <div class="comment-body">
+      <div class="comment-header">
+        <a [routerLink]="['/profile', comment.author.username]" class="comment-author">
+          {{ comment.author.displayName }}
+        </a>
+        <span class="comment-time">{{ comment.createdAt | timeAgo }}</span>
+      </div>
+
+      <p class="comment-content">{{ comment.content }}</p>
+
+      <div class="comment-actions">
+        <button class="comment-action" [class.active]="comment.isLiked" (click)="toggleLike(comment)">
+          {{ comment.isLiked ? '❤️' : '🤍' }} {{ comment.likesCount | formatCount }}
+        </button>
+        @if (comment.author.id === currentUserId) {
+          <button class="comment-action danger" (click)="deleteComment(comment.id)">🗑️</button>
+        }
+      </div>
+    </div>
+  </div>
+}

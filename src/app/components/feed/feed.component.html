@@ -1,0 +1,74 @@
+<!-- Header -->
+<div class="section-header">
+  <h2>🏠 Fil des créations</h2>
+</div>
+
+<!-- Post form -->
+<app-post-form (postCreated)="onPostCreated()"></app-post-form>
+
+<!-- Suggestions (mobile) -->
+@if (suggestions.length > 0) {
+  <div class="suggestions-mobile">
+    <p class="suggestions-title">Artisans à suivre</p>
+    <div class="suggestions-row">
+      @for (user of suggestions; track user.id) {
+        <div class="suggestion-chip">
+          <div class="avatar avatar-sm"
+               [style.background]="user.avatarColor + '22'">
+            {{ user.avatarInitials }}
+          </div>
+          <span>{{'@'}}{{ user.username }}</span>
+          <button class="btn btn-ghost btn-sm"
+                  (click)="followUser(user.id)">
+            {{ user.isFollowing ? 'Suivi' : '+ Suivre' }}
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+}
+
+<!-- Posts feed -->
+@if (isLoading) {
+  <div class="skeleton-list">
+    @for (i of [1,2,3]; track i) {
+      <div class="skeleton-post">
+        <div class="skeleton avatar-sk"></div>
+        <div class="sk-lines">
+          <div class="skeleton sk-line" style="width:40%"></div>
+          <div class="skeleton sk-line" style="width:90%"></div>
+          <div class="skeleton sk-line" style="width:70%"></div>
+        </div>
+      </div>
+    }
+  </div>
+} @else if (posts.length === 0) {
+  <div class="empty-state">
+    <span class="empty-icon">🏺</span>
+    <h3>Aucune création pour l'instant</h3>
+    <p>Partagez votre premier chef-d'œuvre !</p>
+  </div>
+} @else {
+  <div class="posts-list">
+    @for (post of posts; track post.id) {
+      <app-post-card
+        [post]="post"
+        (deleted)="onPostDeleted($event)">
+      </app-post-card>
+    }
+  </div>
+
+  <!-- Load more -->
+  @if (hasMore) {
+    <div #scrollAnchor style="height: 1px;"></div>
+    @if (isLoadingMore) {
+      <div class="load-more">
+        <span class="spinner">⟳</span> Chargement…
+      </div>
+    }
+  } @else {
+    <div class="end-message">
+      <span>🎉 Vous avez tout vu !</span>
+    </div>
+  }
+}
